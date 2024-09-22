@@ -1,0 +1,180 @@
+---
+title: "Some BP project insights"
+author: "Michael Hughes"
+date: "04 Sep 2024"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Load necessary packages
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(gridExtra)
+library(knitr)
+#library(DescTools)
+```
+
+
+```{r, echo=FALSE}
+# Read in data
+bpdata <- read.csv("/Users/presidentoliver/Desktop/Practicum in Data Analysis/Project 1 - Blood pressure study/bloodpressurestudy.csv")
+#names(bpdata)
+```
+
+
+### Data processing and calculation of different endpoints
+
+```{r}
+bpdata <- bpdata %>%
+  mutate(subject = factor(subject),
+         BPchange = after-before,                                # straight pre/post diff
+         rel.BPchange = (after-before)/before,                   # change relative to initial
+         BP.pct.drop.120 = 100*(before-after)/(before-120)) %>%  # % drop rel to 120 (interp?)
+  rename(ID = subject,
+         Drug = drug, 
+         SysBP.pre = before, 
+         SysBP.post = after)
+```
+
+
+### Mean responses by drug
+
+```{r, echo=FALSE}
+bpdata %>%
+  group_by(Drug) %>%
+  summarize(across(where(is.numeric), mean, .names = "mean_{col}")) %>%
+  kable()
+```
+
+
+### SDs of responses by drug
+
+```{r, echo=FALSE}
+bpdata %>%
+  group_by(Drug) %>%
+  summarize(across(where(is.numeric), sd, .names = "sd_{col}")) %>%
+  kable()
+```
+
+
+### Visualizations
+
+```{r}
+p1 <- ggplot(bpdata) + geom_point(aes(x=Drug, y=BPchange)) + 
+  labs(y="Change in Systolic BP")
+p2 <- ggplot(bpdata) + geom_point(aes(x=Drug, y=rel.BPchange)) + 
+  labs(y="Relative Change in Systolic BP")
+p3 <- ggplot(bpdata) + geom_point(aes(x=Drug, y=BP.pct.drop.120)) + 
+  labs(y="%age Drop Relative to 120")
+
+grid.arrange(p1, p2, p3, ncol = 2, nrow = 2)
+```
+
+
+### Some Different Modeling Strategies
+
+#### Model 1: One-way ANOVA on BP change
+```{r}
+# One-way ANOVA to compare BP change among drugs
+anova1 <- aov(BPchange ~ Drug, data = bpdata)
+summary(anova1)
+
+```
+
+
+#### Model 2: One-way ANOVA on BP change relative to pre-study BP
+```{r}
+# One-way ANOVA on relative change in BP
+anova2 <- aov(rel.BPchange ~ Drug, data = bpdata)
+summary(anova2)
+
+```
+
+
+#### Model 3: One-way ANOVA on %age Drop Relative to 120
+```{r}
+# One-way ANOVA on % drop relative to 120 mmHg
+anova3 <- aov(BP.pct.drop.120 ~ Drug, data = bpdata)
+summary(anova3)
+
+
+```
+
+
+#### Model 4: One-way ANCOVA on post-study BP, using pre-study BP as a covariate
+```{r, message=FALSE}
+# Visualization
+ggplot(bpdata, aes(x=SysBP.pre, y=SysBP.post, shape=Drug, colour=Drug, fill=Drug)) +
+  geom_smooth(method="lm") +
+  geom_point() +
+  labs(x = "Pre-study Systolic BP (mmHg)",
+       y = "Post-study Systolic BP (mmHg)")
+
+# Modeling
+
+ancova1 <- aov(SysBP.post ~ SysBP.pre + Drug, data = bpdata)
+summary(ancova1)
+
+# Perform Tukey test in R
+TukeyHSD(ancova1, "Drug")
+
+```
+
+
+#### Model 5: One-way ANCOVA on change in BP, using pre-study BP as a covariate
+```{r, message=FALSE}
+# Visualization
+ggplot(bpdata, aes(x=SysBP.pre, y=BPchange, shape=Drug, colour=Drug, fill=Drug)) +
+  geom_smooth(method="lm") +
+  geom_point() +
+  labs(x = "Pre-study Systolic BP (mmHg)",
+       y = "Change in Systolic BP (mmHg)")
+
+# Modeling
+ancova2 <- aov(BPchange ~ SysBP.pre + Drug, data = bpdata)
+summary(ancova2)
+
+```
+
+
+### QUESTIONS
+1. How can we compare these models?  Is there a way to do it statistically?
+2. What is one overriding concern in all the above models?
+3. Are you satisfied that analysis assumptions are being met?  What to do if not?
+4. What are some peripheral concerns about the validity of the data?
+
+------
+
+### Assessing the "randomization" claim
+
+Of course we would look at the 'pre' scores to investigate.  If randomization were done, the expectation would be that the distributions of pre-treatment BPs would be the same in all groups.  Approaches to this may include:
+
+1. One way ANOVA (paramteric, strong assumptions made, only compares distributional means)
+
+```{r}
+# ANOVA to assess equality of pre-study BP across groups
+anova_random <- aov(SysBP.pre ~ Drug, data = bpdata)
+summary(anova_random)
+
+```
+2. Kruskal-Wallis test (nonparametric one-waky ANOVA on ranks -- assesses location differences only)
+
+```{r}
+# Nonparametric test to compare distributions of pre-study BP
+kruskal.test(SysBP.pre ~ Drug, data = bpdata)
+
+```
+3. Kolmogorov-Smirnov test (general nonparameteric comparison of CDFs)
+
+```{r}
+# KS test for comparing distributions (pairwise comparisons can be added)
+ks_test_results <- pairwise.t.test(bpdata$SysBP.pre, bpdata$Drug, p.adjust.method = "bonferroni")
+
+ks_test_results
+
+```
+

@@ -1,0 +1,322 @@
+---
+title: "Blood Pressure Study - Project 1"
+author: "Oliver Yawlui"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# FULL ANALYSIS
+
+### Introduction
+
+This study compares the effectiveness of three drugs; Ramipril, Lisinopril, and Moexipril in reducing systolic blood pressure (BP). Each drug was administered to four randomly assigned subjects, and systolic BP was measured before and after treatment. The primary objectives of the study are:
+
+1. To determine whether the three drugs are equally effective in reducing mean blood pressure.
+2. If differences exist, which is the best drug?
+3. Perform a statistical investigation of whether the data support or refute the claim that the individuals were assigned randomly to the drugs.
+
+### Methods
+
+**Data Description:**
+
+The dataset includes three variables: systolic BP before and after treatment, and the drug administered. Each drug group consists of four subjects, totaling 12 subjects in the study.
+
+**Data Processing:**
+
+Calculated endpoints include:
+
+1. BP Change: Difference between post- and pre-treatment BP.
+2. Relative BP Change: The ratio of BP change relative to pre-treatment BP.
+3. Percentage Drop Relative to 120 mmHg: A measure expressing the percentage drop from pre-treatment BP, standardized to a target of 120 mmHg.
+
+**Statistical Models and Tests:**
+
+1. Three ANOVA models were used to compare changes in BP, relative changes, and percentage drops among the drug groups.
+ANCOVA models were conducted to adjust for initial BP levels, examining whether accounting for pre-treatment BP affected the drug comparisons.
+
+2. Assessment of Randomization: To verify the claim of randomization, pre-treatment BP values were compared among the drug groups using:
+* One-Way ANOVA : A parametric approach to test for equality of mean pre-treatment BP.
+
+* Kruskal-Wallis Test : A nonparametric alternative to ANOVA that tests for differences in median values.
+
+### Results
+
+**1. Mean and Standard Deviations by Drug:**
+
+ The study of data for the three drugs; Lisinopril, Moexipril, and Ramipril shows significant changes in systolic blood pressure (BP) before and after treatment. All three medicines result in a considerable drop in mean systolic blood pressure after treatment. Moexipril shows the greatest mean decrease (-44.5 mmHg), followed by Lisinopril (-38.75 mmHg) and Ramipril (-32.0 mmHg). Moexipril has the biggest relative BP change (-0.2558), whilst Ramipril has the smallest (-0.1772).
+
+Moexipril has the biggest percentage drop in blood pressure (85.36%), followed by Lisinopril (77.04%) and Ramipril (54.31%). The standard deviations (SD) show that Moexipril has the least variability in post-BP readings (SD = 4.92), indicating more consistent effects, whereas Lisinopril has the most variability in BP change.
+
+In summary, Moexipril appears to be the most effective drug, offering the largest and most consistent reductions in systolic BP, while Ramipril demonstrates the least impact using the mean and standard deviations by drug.
+
+**2. One way ANOVA results**
+
+* Model 1 (ANOVA on BP change among drugs) reveals that there is no statistically significant difference in BP change among the drugs (F = 1.374, p = 0.302). The p-value is much higher than 0.05, indicating that the mean BP change is not significantly different across the drug groups.
+
+* Model 2 (ANOVA on relative BP change) also shows no statistically significant difference in the relative BP changes across the drugs (F = 2.72, p = 0.119). Though the F-value is higher compared to Model 1, the p-value is still above the 0.05 threshold, suggesting that relative change in BP is consistent across the drugs.
+
+* Model 3 (ANOVA on percentage drop relative to 120 mmHg) indicates a significant difference among the drugs (F = 7.381, p = 0.0127). The p-value is less than 0.05, suggesting that the percentage drop in systolic BP relative to 120 mmHg varies significantly between the drugs.
+
+**3. ANCOVA Results: **
+
+* Model 1 (One-way ANCOVA on post-study BP, using pre-study BP as a covariate) : The hypotheses are; H_0: After adjusting for pre-study BP, there is no difference in post-study BP between the drugs vrs H_a: After adjusting for pre-study BP, there is a difference in post-study BP between the drugs. Since the p-value (0.0305) is less than 0.05, we reject the null hypothesis. This means there is a statistically significant difference in post-study BP among the drugs, even after adjusting for pre-study BP.
+
+* Model 2 (One-way ANCOVA on change in BP, using pre-study BP as a covariate) : The hypotheses are; H_0;  After adjusting for pre-study BP, there is no significant difference in BP change between the drugs vrs H_a: After adjusting for pre-study BP, there is a significant difference in BP change between the drugs. The F-value is 5.568 with a p-value of 0.0305 (p < 0.05). This suggests that, after adjusting for pre-study BP, the change in BP differs significantly between the drugs.
+
+* Post-hoc test : Ramipril appears to be the most effective drug, showing a significant reduction in systolic BP compared to Moexipril (from the Tukeys post hoc test). The difference is 15.70, and the p-value (0.0348) is significant (p < 0.05), indicating that Ramipril is significantly more effective than Moexipril.
+
+**4. Assessment of Randomization:**
+
+* One-way ANOVA: This test was conducted to check if the randomization was effective, meaning that pre-treatment BP should not significantly differ between the groups. The hypotheses are; H_0: There is no difference in the mean pre-study BP across the different drug groups vrs H_a: There is a difference in the mean pre-study BP across at least one of the drug groups. Since the p-value is 0.584 (greater than 0.05), we fail to reject the null hypothesis, indicating that there is no significant difference in the pre-study BP across the drug groups. This suggests that the randomization process was effective, as the groups started with similar baseline BP levels.
+
+* Kruskal-Wallis Test: This test is useful when we cannot assume the normality of the data, as in the parametric approach. The Kruskal-Wallis chi-squared value is 0.80769, with a p-value of 0.6677. Since the p-value is much larger than 0.05, we fail to reject the null hypothesis. The non-parametric Kruskal-Wallis test indicates that there is no significant difference in the distribution of pre-study BP across the drug groups. This supports the idea that the randomization was effective, and the groups started with similar baseline BP distributions. 
+
+### Conclusion
+
+**Effectiveness of the drug:** 
+
+After adjusting for pre-study systolic blood pressure (BP) using ANCOVA, it was found that the type of drug significantly influences the change in BP. Specifically, the drug type has a statistically significant effect on both post-study BP and percentage BP drop, indicating that the drugs differ in their effectiveness at reducing systolic BP. This suggests that while all three drugs (Lisinopril, Moexipril, Ramipril) have some effect, the extent of BP reduction varies across them with Ramipril seeming to be the most effective according to the post hoc test. 
+
+
+**Randomization validation:**
+
+Both the parametric one-way ANOVA and the non-parametric Kruskal-Wallis test on pre-study BP distributions confirmed that there is no significant difference in the pre-study systolic BP across the drug groups. This validates that the randomization process was successful, as the groups were balanced in terms of their initial BP levels.
+
+
+
+## APPENDIX 
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(gridExtra)
+library(knitr)
+```
+
+```{r, echo=FALSE}
+# Read in data
+bpdata <- read.csv("/Users/presidentoliver/Desktop/Practicum in Data Analysis/Project 1 - Blood pressure study/bloodpressurestudy.csv")
+#names(bpdata)
+```
+
+### Data processing and calculation of different endpoints
+
+```{r}
+bpdata <- bpdata %>%
+  mutate(subject = factor(subject),
+         BPchange = after-before,                                # straight pre/post diff
+         rel.BPchange = (after-before)/before,                   # change relative to initial
+         BP.pct.drop.120 = 100*(before-after)/(before-120)) %>%  # % drop rel to 120 (interp?)
+  rename(ID = subject,
+         Drug = drug, 
+         SysBP.pre = before, 
+         SysBP.post = after)
+bpdata
+```
+
+### Mean responses by drug
+
+```{r, echo=FALSE}
+bpdata %>%
+  group_by(Drug) %>%
+  summarize(across(where(is.numeric), mean, .names = "mean_{col}")) %>%
+  kable()
+```
+
+### SDs of responses by drug
+
+```{r, echo=FALSE}
+bpdata %>%
+  group_by(Drug) %>%
+  summarize(across(where(is.numeric), sd, .names = "sd_{col}")) %>%
+  kable()
+```
+
+```{r}
+
+
+
+# Load necessary libraries
+library(dplyr)
+library(knitr)
+library(car)
+library(emmeans)
+
+# Read in data
+bpdata <- read.csv("/Users/presidentoliver/Desktop/Practicum in Data Analysis/Project 1 - Blood pressure study/bloodpressurestudy.csv")
+#names(bpdata)
+
+bpdata <- bpdata %>%
+  mutate(subject = factor(subject),
+         BPchange = after-before,                                # straight pre/post diff
+         rel.BPchange = (after-before)/before,                   # change relative to initial
+         BP.pct.drop.120 = 100*(before-after)/(before-120)) %>%  # % drop rel to 120 (interp?)
+  rename(ID = subject,
+         Drug = drug, 
+         SysBP.pre = before, 
+         SysBP.post = after)
+
+
+
+# calculate both mean and standard deviation for BP_Change by Drug
+formatted_table <- bpdata %>%
+  group_by(Drug) %>%
+  summarize(
+    mean_BP_Change = mean(BPchange, na.rm = TRUE),
+    sd_BP_Change = sd(BPchange, na.rm = TRUE)
+  ) %>%
+  kable(format = "html", digits = 2, caption = "Table 1")  # Adding a caption
+
+# Print formatted table
+formatted_table
+
+
+### Model 5: One-way ANCOVA on change in BP, using pre-study BP as a covariate
+
+# Visualization
+ggplot(bpdata, aes(x=SysBP.pre, y=BPchange, shape=Drug, colour=Drug, fill=Drug)) +
+  geom_smooth(method="lm") +
+  geom_point() +
+  labs(x = "Pre-study Systolic BP (mmHg)",
+       y = "Change in Systolic BP (mmHg)")
+
+# Modeling
+ancova2 <- aov(BPchange ~ SysBP.pre + Drug, data = bpdata)
+
+
+
+# Multiple comparison - simultaneous CIs 
+emmeans(ancova2, specs = pairwise ~ Drug)
+
+# Get the emmeans output
+emmeans_output <- emmeans(ancova2, specs = pairwise ~ Drug)
+
+# Format the contrast results using kable
+contrast_table <- as.data.frame(emmeans_output$contrasts)
+
+# Use kable to format the table for Word
+kable(contrast_table, format = "markdown", caption = "Pairwise Comparisons of Drugs") %>%
+  print() 
+
+# Nonparametric test to compare distributions of pre-study BP
+kruskal_result <- kruskal.test(SysBP.pre ~ Drug, data = bpdata)
+
+
+# Extract the necessary values
+kruskal_df <- data.frame(
+  Statistic = kruskal_result$statistic,
+  Degrees_of_Freedom = kruskal_result$parameter,
+  P_value = kruskal_result$p.value
+)
+kable(kruskal_df, format = "html", digits = 3, caption = "Kruskal-Wallis Test for Pre-treatment BP") %>%
+  print()
+
+
+```
+
+### Visualizations
+
+```{r}
+p1 <- ggplot(bpdata) + geom_point(aes(x=Drug, y=BPchange)) + 
+  labs(y="Change in Systolic BP")
+p2 <- ggplot(bpdata) + geom_point(aes(x=Drug, y=rel.BPchange)) + 
+  labs(y="Relative Change in Systolic BP")
+p3 <- ggplot(bpdata) + geom_point(aes(x=Drug, y=BP.pct.drop.120)) + 
+  labs(y="%age Drop Relative to 120")
+
+grid.arrange(p1, p2, p3, ncol = 2, nrow = 2)
+```
+
+
+### Some Different Modeling Strategies
+
+#### Model 1: One-way ANOVA on BP change
+```{r}
+# One-way ANOVA to compare BP change among drugs
+anova1 <- aov(BPchange ~ Drug, data = bpdata)
+summary(anova1)
+
+```
+
+
+#### Model 2: One-way ANOVA on BP change relative to pre-study BP
+```{r}
+# One-way ANOVA on relative change in BP
+anova2 <- aov(rel.BPchange ~ Drug, data = bpdata)
+summary(anova2)
+
+```
+
+
+#### Model 3: One-way ANOVA on %age Drop Relative to 120
+```{r}
+# One-way ANOVA on % drop relative to 120 mmHg
+anova3 <- aov(BP.pct.drop.120 ~ Drug, data = bpdata)
+summary(anova3)
+
+
+```
+
+
+#### Model 4: One-way ANCOVA on post-study BP, using pre-study BP as a covariate
+```{r, message=FALSE}
+# Visualization
+ggplot(bpdata, aes(x=SysBP.pre, y=SysBP.post, shape=Drug, colour=Drug, fill=Drug)) +
+  geom_smooth(method="lm") +
+  geom_point() +
+  labs(x = "Pre-study Systolic BP (mmHg)",
+       y = "Post-study Systolic BP (mmHg)")
+
+# Modeling
+
+ancova1 <- aov(SysBP.post ~ SysBP.pre + Drug, data = bpdata)
+summary(ancova1)
+
+# Perform Tukey test in R
+TukeyHSD(ancova1, "Drug")
+
+```
+
+#### Model 5: One-way ANCOVA on change in BP, using pre-study BP as a covariate
+```{r, message=FALSE}
+# Visualization
+ggplot(bpdata, aes(x=SysBP.pre, y=BPchange, shape=Drug, colour=Drug, fill=Drug)) +
+  geom_smooth(method="lm") +
+  geom_point() +
+  labs(x = "Pre-study Systolic BP (mmHg)",
+       y = "Change in Systolic BP (mmHg)")
+
+# Modeling
+ancova2 <- aov(BPchange ~ SysBP.pre + Drug, data = bpdata)
+summary(ancova2)
+
+```
+
+### Assessing the "randomization" claim
+
+Of course we would look at the 'pre' scores to investigate.  If randomization were done, the expectation would be that the distributions of pre-treatment BPs would be the same in all groups.  Approaches to this may include:
+
+1. One way ANOVA (paramteric, strong assumptions made, only compares distributional means)
+
+```{r}
+# ANOVA to assess equality of pre-study BP across groups
+anova_random <- aov(SysBP.pre ~ Drug, data = bpdata)
+summary(anova_random)
+
+```
+2. Kruskal-Wallis test (nonparametric one-waky ANOVA on ranks -- assesses location differences only)
+
+```{r}
+# Nonparametric test to compare distributions of pre-study BP
+kruskal.test(SysBP.pre ~ Drug, data = bpdata)
+
+```
+
+
+
+ 
+
