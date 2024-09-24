@@ -1,6 +1,5 @@
 ---
 title: "Some BP project insights"
-author: "Michael Hughes"
 date: "04 Sep 2024"
 output: html_document
 ---
